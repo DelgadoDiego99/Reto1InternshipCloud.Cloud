@@ -45,7 +45,7 @@ Resources:
       Parameters:
         DynamoTableName: !GetAtt DataStack.Outputs.ToDoDynamoTableName
         APIGatewayRoleArn: !GetAtt LambdaAPIRolesStack.Outputs.APIGatewayRoleArn
-        LambdaGETRoleArn: !GetAtt LambdaAPIRolesStack.Outputs.LambdaFunctionGETRoleArn
+        LambdaGETAllRoleArn: !GetAtt LambdaAPIRolesStack.Outputs.LambdaFunctionGETRoleArn
         LambdaPOSTRoleArn: !GetAtt LambdaAPIRolesStack.Outputs.LambdaFunctionPOSTRoleArn
         LambdaPUTRoleArn: !GetAtt LambdaAPIRolesStack.Outputs.LambdaFunctionPUTRoleArn
         LambdaDELETERoleArn: !GetAtt LambdaAPIRolesStack.Outputs.LambdaFunctionDELETERoleArn  
