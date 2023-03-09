@@ -129,8 +129,6 @@ Resources:
         - !Ref LambdaFunctionDELETEToDoRole
 
 Outputs:
-  APIGatewayRoleArn:
-    Value: !GetAtt APIGatewayBackendToDoRole.Arn
   LambdaFunctionGETAllRoleArn:
     Value: !GetAtt LambdaFunctionGETAllToDoRole.Arn
   LambdaFunctionPOSTRoleArn:
