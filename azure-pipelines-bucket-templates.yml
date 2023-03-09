@@ -6,6 +6,7 @@ pool:
 steps:
 - task: CloudFormationCreateOrUpdateStack@1
   inputs:
+    awsCredentials: 'AWS-AzurePipelines'
     regionName: 'us-east-1'
     stackName: 'ToDoWebAppBucketCloudformationBackend'
     templateSource: 'file'

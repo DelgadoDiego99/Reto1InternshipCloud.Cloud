@@ -15,6 +15,7 @@ variables:
 steps:
 - task: S3Upload@1
   inputs:
+    awsCredentials: 'AWS-AzurePipelines'
     regionName: 'us-east-1'
     bucketName: ''
     sourceFolder: 'Stacks'
@@ -22,6 +23,7 @@ steps:
 
 - task: CloudFormationCreateOrUpdateStack@1
   inputs:
+    awsCredentials: 'AWS-AzurePipelines'
     regionName: 'us-east-1'
     stackName: 'ToDoWebApp'
     templateSource: 'file'
