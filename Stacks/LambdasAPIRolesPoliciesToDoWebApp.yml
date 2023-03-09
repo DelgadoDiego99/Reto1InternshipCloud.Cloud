@@ -27,12 +27,12 @@ Resources:
                 Action:
                   - lambda:InvokeFunction
                 Resource:
-                  - !GetAtt LambdaFunctionGETToDoRole.Arn
+                  - !GetAtt LambdaFunctionGETAllToDoRole.Arn
                   - !GetAtt LambdaFunctionPOSTToDoRole.Arn
                   - !GetAtt LambdaFunctionPUTToDoRole.Arn
                   - !GetAtt LambdaFunctionDELETEToDoRole.Arn
 
-  LambdaFunctionGETToDoRole:
+  LambdaFunctionGETAllToDoRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -63,7 +63,7 @@ Resources:
             Resource:
               - !Ref DynamoTableArn
       Roles:
-        - !Ref LambdaFunctionGETToDoRole
+        - !Ref LambdaFunctionGETAllToDoRole
   
   LambdaFunctionPOSTToDoRole:
     Type: AWS::IAM::Role
@@ -152,3 +152,15 @@ Resources:
               - !Ref DynamoTableArn
       Roles:
         - !Ref LambdaFunctionDELETEToDoRole
+
+Outputs:
+  APIGatewayRoleArn:
+    Value: !GetAtt APIGatewayBackendToDoRole.Arn
+  LambdaFunctionGETAllRoleArn:
+    Value: !GetAtt LambdaFunctionGETAllToDoRole.Arn
+  LambdaFunctionPOSTRoleArn:
+    Value: !GetAtt LambdaFunctionPOSTToDoRole.Arn
+  LambdaFunctionPUTRoleArn:
+    Value: !GetAtt LambdaFunctionPUTToDoRole.Arn
+  LambdaFunctionDELETERoleArn:
+    Value: !GetAtt LambdaFunctionDELETEToDoRole.Arn

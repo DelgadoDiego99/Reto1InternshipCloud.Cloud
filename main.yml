@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  S3BucketTemplatesToDoWebApp:
+  S3BucketExportTemplatesToDoWebApp:
     Type: String
     Default: ToDoWebAppStackTemplates
   MainFunctionLambda:
@@ -22,7 +22,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/DataLayerToDoWebApp.yml"]]
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/DataLayerToDoWebApp.yml"]]
   
   LambdaAPIRolesStack:
     Type: AWS::CloudFormation::Stack
@@ -30,7 +30,7 @@ Resources:
       - DataStack
     Properties:
       TemplateURL:
-        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/LambdasRolesPoliciesToDoWebApp.yml"]]
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/LambdasRolesPoliciesToDoWebApp.yml"]]
       Parameters:
         DynamoTableArn: !GetAtt DataStack.Outputs.ToDoDynamoTableArn
   
@@ -38,12 +38,17 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn:
       - DataStack
-      - LambdaRolesStack
+      - LambdaAPIRolesStack
     Properties:
       TemplateURL: 
-        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/BackendLayerToDoWebApp.yml"]]
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/BackendLayerToDoWebApp.yml"]]
       Parameters:
-        DynamoTableName: !GetAtt DataStack.Outputs.ToDoDynamoTableName 
+        DynamoTableName: !GetAtt DataStack.Outputs.ToDoDynamoTableName
+        APIGatewayRoleArn: !GetAtt LambdaRolesStack.Outputs.APIGatewayRoleArn
+        LambdaGETRoleArn: !GetAtt LambdaRolesStack.Outputs.LambdaFunctionGETRoleArn
+        LambdaPOSTRoleArn: !GetAtt LambdaRolesStack.Outputs.LambdaFunctionPOSTRoleArn
+        LambdaPUTRoleArn: !GetAtt LambdaRolesStack.Outputs.LambdaFunctionPUTRoleArn
+        LambdaDELETERoleArn: !GetAtt LambdaRolesStack.Outputs.LambdaFunctionDELETERoleArn  
         Runtime: nodejs14.x
         Handler: !Ref MainFunctionLambda
         APIStageName: !Ref APIStageName
@@ -56,7 +61,7 @@ Resources:
       - BackendStack
     Properties:
       TemplateURL: 
-        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/FrontEndLayerToDoWebApp.yml"]]
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/FrontEndLayerToDoWebApp.yml"]]
       Parameters:
         APIStageName: !Ref APIStageName
         APIBaseResource: !Ref APIBaseResource

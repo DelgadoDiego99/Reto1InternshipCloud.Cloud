@@ -8,7 +8,10 @@ Parameters:
     Type: String
     Default: 646515679322-todowebappbackend
 
-  LambdaGETRoleArn:
+  APIGatewayRoleArn:
+    Type: String
+
+  LambdaGETAllRoleArn:
     Type: String
 
   LambdaPOSTRoleArn:
@@ -66,7 +69,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        Credentials: !Ref APIGatewayRoleArn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoGET.Arn}/invocations" 
@@ -80,7 +83,7 @@ Resources:
       FunctionName: getAllToDo-function
       Handler: !Join ["", [LambdaFunctionGETAll, ".", !Ref Handler]]
       Runtime: !Ref Runtime
-      Role: !Ref LambdaGETRoleArn
+      Role: !Ref LambdaGETAllRoleArn
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoTableName
@@ -93,7 +96,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo  
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        Credentials: !Ref APIGatewayRoleArn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPOST.Arn}/invocations"
@@ -120,7 +123,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        Credentials: !Ref APIGatewayRoleArn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPUT.Arn}/invocations"
@@ -147,7 +150,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        Credentials: !Ref APIGatewayRoleArn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoDELETE.Arn}/invocations"
