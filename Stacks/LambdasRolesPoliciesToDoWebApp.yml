@@ -7,31 +7,6 @@ Parameters:
     Type: String
 
 Resources:
-  APIGatewayBackendToDoRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action: sts:AssumeRole
-            Principal:
-              Service:
-                - apigateway.amazonaws.com
-      Policies:
-        - PolicyName: APIGatewayBackendToDo-InvokeLambdaFunctionPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - lambda:InvokeFunction
-                Resource:
-                  - !GetAtt LambdaFunctionGETAllToDoRole.Arn
-                  - !GetAtt LambdaFunctionPOSTToDoRole.Arn
-                  - !GetAtt LambdaFunctionPUTToDoRole.Arn
-                  - !GetAtt LambdaFunctionDELETEToDoRole.Arn
-
   LambdaFunctionGETAllToDoRole:
     Type: AWS::IAM::Role
     Properties:

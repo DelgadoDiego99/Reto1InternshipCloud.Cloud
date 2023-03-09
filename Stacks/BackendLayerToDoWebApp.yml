@@ -8,9 +8,6 @@ Parameters:
     Type: String
     Default: 646515679322-todowebappbackend
 
-  APIGatewayRoleArn:
-    Type: String
-
   LambdaGETAllRoleArn:
     Type: String
 
@@ -69,7 +66,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !Ref APIGatewayRoleArn
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoGET.Arn}/invocations" 
@@ -96,7 +93,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo  
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !Ref APIGatewayRoleArn
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPOST.Arn}/invocations"
@@ -123,7 +120,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !Ref APIGatewayRoleArn
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPUT.Arn}/invocations"
@@ -150,7 +147,7 @@ Resources:
       ResourceId: !Ref APIGatewayBackendResourceToDo
       RestApiId: !Ref APIGatewayBackendToDo
       Integration:
-        Credentials: !Ref APIGatewayRoleArn
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
         IntegrationHttpMethod: POST
         Type: AWS_PROXY
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoDELETE.Arn}/invocations"
@@ -168,6 +165,31 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoTableName
+    
+  APIGatewayBackendToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+      Policies:
+        - PolicyName: APIGatewayBackendToDo-InvokeLambdaFunctionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt LambdaFunctionToDoGET.Arn
+                  - !GetAtt LambdaFunctionToDoPOST.Arn
+                  - !GetAtt LambdaFunctionToDoPUT.Arn
+                  - !GetAtt LambdaFunctionToDoDELETE.Arn
 
   APIGatewayBackendToDoWebAppStage:
     Type: AWS::ApiGateway::Stage

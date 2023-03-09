@@ -20,9 +20,10 @@ Parameters:
 Description: AWS CloudFormation Template for the frontend layer of a To-do list Web App
 
 Resources:
-  S3BucketWebAppToDo:
+  S3BucketFrontendToDoWebApp:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Sub "${AWS::AccountId}-todowebappfrontend"
       Tags:
         - Key: "Purpose"
           Value: "Keep the files used by the webpage"
@@ -36,7 +37,7 @@ Resources:
   S3FrontendBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3BucketWebAppToDo
+      Bucket: !Ref S3BucketFrontendToDoWebApp
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -44,12 +45,12 @@ Resources:
             Principal: "*"
             Action:
               - "s3:GetObject"
-            Resource: !Join ['', ["arn:aws:s3:::", !Ref S3BucketWebAppToDo, "/*"]]
+            Resource: !Join ['', ["arn:aws:s3:::", !Ref S3BucketFrontendToDoWebApp, "/*"]]
 
   CloudFrontWebsiteAPIConnection:
     Type: AWS::CloudFront::Distribution
     DependsOn:
-      - S3BucketWebAppToDo
+      - S3BucketFrontendToDoWebApp
     Properties:
       Tags:
       - Key: "Purpose"
@@ -87,7 +88,7 @@ Resources:
         DefaultRootObject: index.html
         Enabled: true
         Origins:
-          - DomainName: !GetAtt S3BucketWebAppToDo.DomainName
+          - DomainName: !GetAtt S3BucketFrontendToDoWebApp.DomainName
             Id: webpage
             OriginShield:
               Enabled: true
@@ -107,10 +108,10 @@ Resources:
 Outputs:
   S3BucketName:
     Description: Name of the S3 Bucket where the webpage and functions for Lambdas will be
-    Value: !Ref S3BucketWebAppToDo
+    Value: !Ref S3BucketFrontendToDoWebApp
   S3BucketDomain:
     Description: IPv4 DNS name of the bucket
-    Value: !GetAtt S3BucketWebAppToDo.DomainName
+    Value: !GetAtt S3BucketFrontendToDoWebApp.DomainName
   CloudFrontDomain:
     Description: IPV4 DNS name for the CloudFront Distribution
     Value: !GetAtt CloudFrontWebsiteAPIConnection.DomainName
