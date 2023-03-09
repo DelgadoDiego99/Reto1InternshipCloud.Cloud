@@ -42,4 +42,4 @@ Outputs:
   S3ToDoTemplateName:
     Value: !Ref S3BucketTemplatesToDoWebApp
   S3ToDoBackendName:
-    Value: !Ref S3BucketTemplatesToDoWebApp
+    Value: !Ref S3BucketBackendToDoWebApp
