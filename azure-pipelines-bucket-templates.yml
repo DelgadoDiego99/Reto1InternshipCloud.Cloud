@@ -9,4 +9,4 @@ steps:
     regionName: 'us-east-1'
     stackName: 'ToDoWebAppBucketCloudformationBackend'
     templateSource: 'file'
-    templateFile: 'CloudformationTemplates/CreateBucket.yml'
+    templateFile: 'CreateBucket.yml'
