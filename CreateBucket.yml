@@ -9,7 +9,7 @@ Resources:
   S3BucketTemplatesToDoWebApp:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::AccountId}-ToDoWebAppCloudResources"
+      BucketName: !Sub "${AWS::AccountId}-todowebappcloudresources"
       Tags:
         - Key: "Purpose"
           Value: "Keep the files with the Cloudformation stacks used by the main stack file"
@@ -23,7 +23,7 @@ Resources:
   S3BucketBackendToDoWebApp:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::AccountId}-ToDoWebAppBackend"
+      BucketName: !Sub "${AWS::AccountId}-todowebappbackend"
       Tags:
         - Key: "Purpose"
           Value: "Keep the files of the lambda functions used by the app"
