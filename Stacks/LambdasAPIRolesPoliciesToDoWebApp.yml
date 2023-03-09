@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation Template for the roles and policies of the Lambdas in the backend layer of a To-do list Web App
+
+Parameters:
+  DynamoTableArn:
+    Type: String
+
+Resources:
+  APIGatewayBackendToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+      Policies:
+        - PolicyName: APIGatewayBackendToDo-InvokeLambdaFunctionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt LambdaFunctionGETToDoRole.Arn
+                  - !GetAtt LambdaFunctionPOSTToDoRole.Arn
+                  - !GetAtt LambdaFunctionPUTToDoRole.Arn
+                  - !GetAtt LambdaFunctionDELETEToDoRole.Arn
+
+  LambdaFunctionGETToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  LambdaFunctionGETToDoPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaFunctionToDoGET-DynamoTableToDo"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:BatchGetItem
+            - dynamodb:DescribeTable
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            Resource:
+              - !Ref DynamoTableArn
+      Roles:
+        - !Ref LambdaFunctionGETToDoRole
+  
+  LambdaFunctionPOSTToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  LambdaFunctionPOSTToDoPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaFunctionToDoPOST-DynamoTableToDo"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:BatchWriteItem
+            - dynamodb:PutItem
+            Resource:
+              - !Ref DynamoTableArn
+      Roles:
+        - !Ref LambdaFunctionPOSTToDoRole
+  
+  LambdaFunctionPUTToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  LambdaFunctionPUTToDoPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaFunctionToDoPUT-DynamoTableToDo"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:UpdateItem
+            Resource:
+              - !Ref DynamoTableArn
+      Roles:
+      - !Ref LambdaFunctionPUTToDoRole
+  
+  LambdaFunctionDELETEToDoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  LambdaFunctionDELETEToDoPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaFunctionToDoDELETE-DynamoTableToDo"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:DeleteItem
+            Resource:
+              - !Ref DynamoTableArn
+      Roles:
+        - !Ref LambdaFunctionDELETEToDoRole

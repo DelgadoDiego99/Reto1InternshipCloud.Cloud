@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  S3BucketTemplatesToDoWebApp:
+    Type: String
+    Default: ToDoWebAppStackTemplates
+  MainFunctionLambda:
+    Type: String
+    Default: handler
+  APIStageName:
+    Type: String
+    Default: api
+  APIBaseResource:
+    Type: String
+    Default: v1
+  APIMainResource:
+    Type: String
+    Default: todo
+
+Resources:
+  DataStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/DataLayerToDoWebApp.yml"]]
+  
+  LambdaAPIRolesStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - DataStack
+    Properties:
+      TemplateURL:
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/LambdasRolesPoliciesToDoWebApp.yml"]]
+      Parameters:
+        DynamoTableArn: !GetAtt DataStack.Outputs.ToDoDynamoTableArn
+  
+  BackendStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - DataStack
+      - LambdaRolesStack
+    Properties:
+      TemplateURL: 
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/BackendLayerToDoWebApp.yml"]]
+      Parameters:
+        DynamoTableName: !GetAtt DataStack.Outputs.ToDoDynamoTableName 
+        Runtime: nodejs14.x
+        Handler: !Ref MainFunctionLambda
+        APIStageName: !Ref APIStageName
+        APIBaseResource: !Ref APIBaseResource
+        APIMainResource: !Ref APIMainResource
+  
+  FrontStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - BackendStack
+    Properties:
+      TemplateURL: 
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketTemplatesToDoWebApp, "-DomainName"]], "/FrontEndLayerToDoWebApp.yml"]]
+      Parameters:
+        APIStageName: !Ref APIStageName
+        APIBaseResource: !Ref APIBaseResource
+        APIMainResource: !Ref APIMainResource
+        APIGatewayBackendToDo: !GetAtt BackendStack.Outputs.APIGatewayBackendToDo

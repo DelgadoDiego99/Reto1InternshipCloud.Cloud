@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  APIStageName:
+    Type: String
+  
+  APIBaseResource:
+    Type: String
+  
+  APIMainResource:
+    Type: String
+  
+  APIGatewayBackendToDo:
+    Type: String
+  
+  RegionOriginShield:
+    Type: String
+    Default: us-east-1
+
+Description: AWS CloudFormation Template for the frontend layer of a To-do list Web App
+
+Resources:
+  S3BucketWebAppToDo:
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags:
+        - Key: "Purpose"
+          Value: "Keep the files used by the webpage"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  S3FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketWebAppToDo
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action:
+              - "s3:GetObject"
+            Resource: !Join ['', ["arn:aws:s3:::", !Ref S3BucketWebAppToDo, "/*"]]
+
+  CloudFrontWebsiteAPIConnection:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - S3BucketWebAppToDo
+    Properties:
+      Tags:
+      - Key: "Purpose"
+        Value: "Make the connection between the S3 Bucket that is hosting the website and the API"
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: true
+          TargetOriginId: webpage
+          ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - HEAD
+              - OPTIONS
+              - PATCH 
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            ForwardedValues:
+              Headers:
+                - Accept
+                - Referer
+                - Authorization
+                - Content-Type
+              QueryString: true
+            PathPattern: "/v1/*"
+            TargetOriginId: !Ref APIStageName
+            ViewerProtocolPolicy: https-only
+        DefaultRootObject: index.html
+        Enabled: true
+        Origins:
+          - DomainName: !GetAtt S3BucketWebAppToDo.DomainName
+            Id: webpage
+            OriginShield:
+              Enabled: true
+              OriginShieldRegion: !Ref RegionOriginShield
+            S3OriginConfig:
+              OriginAccessIdentity: !Ref AWS::NoValue
+          - DomainName: !Sub "${APIGatewayBackendToDo}.execute-api.${AWS::Region}.amazonaws.com"
+            Id: !Ref APIStageName
+            OriginShield:
+              Enabled: true
+              OriginShieldRegion: !Ref RegionOriginShield
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+            OriginPath: !Join ["", [/, !Ref APIStageName]]
+        PriceClass: PriceClass_100
+
+Outputs:
+  S3BucketName:
+    Description: Name of the S3 Bucket where the webpage and functions for Lambdas will be
+    Value: !Ref S3BucketWebAppToDo
+  S3BucketDomain:
+    Description: IPv4 DNS name of the bucket
+    Value: !GetAtt S3BucketWebAppToDo.DomainName
+  CloudFrontDomain:
+    Description: IPV4 DNS name for the CloudFront Distribution
+    Value: !GetAtt CloudFrontWebsiteAPIConnection.DomainName
+  CloudFrontDomainAPI:
+    Description: IPV4 DNS name for the API through CloudFront Distribution
+    Value: !Join ['', [!GetAtt CloudFrontWebsiteAPIConnection.DomainName, "/", !Ref APIBaseResource, "/", !Ref APIMainResource]]

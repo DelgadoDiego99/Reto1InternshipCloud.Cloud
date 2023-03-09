@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  ExportS3BucketName:
+    Type: String
+    Default: ToDoWebAppStackTemplates
+
+Resources:
+  S3BucketTemplatesToDoWebApp:
+    Type: AWS::S3::Bucket
+    BucketName: !Sub "${AWS::AccountId}-ToDoWebAppCloudResources"
+    Properties:
+      Tags:
+        - Key: "Purpose"
+          Value: "Keep the files with the Cloudformation stacks used by the main stack file"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  S3BucketBackendToDoWebApp:
+    Type: AWS::S3::Bucket
+    BucketName: !Sub "${AWS::AccountId}-ToDoWebAppBackend"
+    Properties:
+      Tags:
+        - Key: "Purpose"
+          Value: "Keep the files of the lambda functions used by the app"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+Outputs:
+  S3TemplateDomainName:
+    Value: !Join ["", ["https://", !GetAtt S3BucketTemplatesToDoWebApp.DomainName]]
+    Export:
+      Name: !Join ["", [!Ref AWS::AccountId, "-", !Ref ExportS3BucketName, "-DomainName"]]
+  S3ToDoTemplateName:
+    Value: !Ref S3BucketTemplatesToDoWebApp
+  S3ToDoBackendName:
+    Value: !Ref S3BucketTemplatesToDoWebApp

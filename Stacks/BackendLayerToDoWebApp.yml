@@ -1,0 +1,194 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  DynamoTableName:
+    Type: String
+
+  S3BucketLambdaFunctions:
+    Type: String
+    Default: todowebappbucketcloudfor-s3bucketlambdafunctionst-sudk4efnpfp
+
+  LambdaGETRoleArn:
+    Type: String
+
+  LambdaPOSTRoleArn:
+    Type: String
+
+  LambdaPUTRoleArn:
+    Type: String
+
+  LambdaDELETERoleArn:
+    Type: String
+
+  Runtime:
+    Type: String
+  
+  Handler:
+    Type: String
+  
+  APIStageName:
+    Type: String
+  
+  APIBaseResource:
+    Type: String
+  
+  APIMainResource:
+    Type: String
+
+Description: AWS CloudFormation Template for the backend layer of a To-do list Web App
+
+Resources:
+  APIGatewayBackendToDo:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: APIGatewayBackendToDo
+      Description: APIGateway that makes petitions to the the data via Lambdas
+  
+  APIGatewayBackendResourceV1:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref APIGatewayBackendToDo
+      ParentId: !GetAtt APIGatewayBackendToDo.RootResourceId
+      PathPart: !Ref APIBaseResource
+  
+  APIGatewayBackendResourceToDo:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref APIGatewayBackendToDo
+      ParentId: !Ref APIGatewayBackendResourceV1
+      PathPart: !Ref APIMainResource
+  
+  APIGatewayMethodGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      ResourceId: !Ref APIGatewayBackendResourceToDo
+      RestApiId: !Ref APIGatewayBackendToDo
+      Integration:
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoGET.Arn}/invocations" 
+  
+  LambdaFunctionToDoGET:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          console.log("Hello, GETAll");
+      FunctionName: getAllToDo-function
+      Handler: !Join ["", [LambdaFunctionGETAll, ".", !Ref Handler]]
+      Runtime: !Ref Runtime
+      Role: !Ref LambdaGETRoleArn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoTableName
+          
+  APIGatewayMethodPOST:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      ResourceId: !Ref APIGatewayBackendResourceToDo  
+      RestApiId: !Ref APIGatewayBackendToDo
+      Integration:
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPOST.Arn}/invocations"
+  
+  LambdaFunctionToDoPOST:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+            console.log("Hello, POST");
+      FunctionName: postToDo-function
+      Handler: !Join ["", [LambdaFunctionPOST, ".", !Ref Handler]]
+      Runtime: !Ref Runtime
+      Role: !Ref LambdaPOSTRoleArn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoTableName
+  
+  APIGatewayMethodPUT:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      ResourceId: !Ref APIGatewayBackendResourceToDo
+      RestApiId: !Ref APIGatewayBackendToDo
+      Integration:
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoPUT.Arn}/invocations"
+  
+  LambdaFunctionToDoPUT:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          console.log("Hello, PUT");
+      FunctionName: putToDo-function
+      Handler: !Join ["", [LambdaFunctionPUT, ".", !Ref Handler]]
+      Runtime: !Ref Runtime
+      Role: !Ref LambdaPUTRoleArn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoTableName
+  
+  APIGatewayMethodDELETE:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: DELETE
+      ResourceId: !Ref APIGatewayBackendResourceToDo
+      RestApiId: !Ref APIGatewayBackendToDo
+      Integration:
+        Credentials: !GetAtt APIGatewayBackendToDoRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionToDoDELETE.Arn}/invocations"
+  
+  LambdaFunctionToDoDELETE:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          console.log("Hello, DELETE);
+      FunctionName: deleteToDo-function
+      Handler: !Join ["", [LambdaFunctionDELETE, ".", !Ref Handler]]
+      Runtime: !Ref Runtime
+      Role: !Ref LambdaDELETERoleArn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoTableName
+
+  APIGatewayBackendToDoWebAppStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref APIGatewayBackendToDoWebAppDeployment
+      RestApiId: !Ref APIGatewayBackendToDo
+      StageName: !Ref APIStageName
+
+  APIGatewayBackendToDoWebAppDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref APIGatewayBackendToDo
+      Description: Deployment for the API Gateway
+    DependsOn:
+      - APIGatewayMethodGET
+      - APIGatewayMethodPOST
+      - APIGatewayMethodPUT
+      - APIGatewayMethodDELETE
+
+Outputs:
+  APIFullDomain:
+    Description: IPV4 DNS name for the API
+    Value: !Sub "https://${APIGatewayBackendToDo}.execute-api.${AWS::Region}.amazonaws.com/${APIGatewayBackendToDoWebAppStage}/${APIBaseResource}/${APIMainResource}"
+  APIGatewayBackendToDo:
+    Description: Reference to the API Gateway
+    Value: !Ref APIGatewayBackendToDo
+  
