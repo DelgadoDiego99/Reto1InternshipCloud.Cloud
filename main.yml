@@ -30,7 +30,7 @@ Resources:
       - DataStack
     Properties:
       TemplateURL:
-        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/LambdasRolesPoliciesToDoWebApp.yml"]]
+        !Join ["", [Fn::ImportValue: !Join ["", [!Ref AWS::AccountId, "-", !Ref S3BucketExportTemplatesToDoWebApp, "-DomainName"]], "/LambdasAPIRolesPoliciesToDoWebApp.yml"]]
       Parameters:
         DynamoTableArn: !GetAtt DataStack.Outputs.ToDoDynamoTableArn
   
