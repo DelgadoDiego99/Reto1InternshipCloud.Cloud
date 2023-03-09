@@ -17,7 +17,7 @@ steps:
   inputs:
     awsCredentials: 'AWS-AzurePipelines'
     regionName: 'us-east-1'
-    bucketName: ''
+    bucketName: '646515679322-todowebappcloudresources'
     sourceFolder: 'Stacks'
     globExpressions: '*.yml'
 
