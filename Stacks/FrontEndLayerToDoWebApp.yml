@@ -117,4 +117,4 @@ Outputs:
     Value: !GetAtt CloudFrontWebsiteAPIConnection.DomainName
   CloudFrontDomainAPI:
     Description: IPV4 DNS name for the API through CloudFront Distribution
-    Value: !Join ['', [!GetAtt CloudFrontWebsiteAPIConnection.DomainName, "/", !Ref APIBaseResource, "/", !Ref APIMainResource]]
+    Value: !Join ['', ["https://", !GetAtt CloudFrontWebsiteAPIConnection.DomainName, "/", !Ref APIBaseResource, "/", !Ref APIMainResource]]
