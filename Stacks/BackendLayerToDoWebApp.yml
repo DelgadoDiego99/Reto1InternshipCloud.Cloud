@@ -6,7 +6,7 @@ Parameters:
 
   S3BucketLambdaFunctions:
     Type: String
-    Default: todowebappbucketcloudfor-s3bucketlambdafunctionst-sudk4efnpfp
+    Default: 646515679322-todowebappbackend
 
   LambdaGETRoleArn:
     Type: String
@@ -75,8 +75,8 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile: |
-          console.log("Hello, GETAll");
+        S3Bucket: !Ref S3BucketLambdaFunctions
+        S3Key: 'LambdaFunctionGETAll.zip'
       FunctionName: getAllToDo-function
       Handler: !Join ["", [LambdaFunctionGETAll, ".", !Ref Handler]]
       Runtime: !Ref Runtime
@@ -102,8 +102,8 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile: |
-            console.log("Hello, POST");
+        S3Bucket: !Ref S3BucketLambdaFunctions
+        S3Key: 'LambdaFunctionPOST.zip'
       FunctionName: postToDo-function
       Handler: !Join ["", [LambdaFunctionPOST, ".", !Ref Handler]]
       Runtime: !Ref Runtime
@@ -129,8 +129,8 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile: |
-          console.log("Hello, PUT");
+        S3Bucket: !Ref S3BucketLambdaFunctions
+        S3Key: 'LambdaFunctionPUT.zip'
       FunctionName: putToDo-function
       Handler: !Join ["", [LambdaFunctionPUT, ".", !Ref Handler]]
       Runtime: !Ref Runtime
@@ -156,8 +156,8 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile: |
-          console.log("Hello, DELETE);
+        S3Bucket: !Ref S3BucketLambdaFunctions
+        S3Key: 'LambdaFunctionDELETE.zip'
       FunctionName: deleteToDo-function
       Handler: !Join ["", [LambdaFunctionDELETE, ".", !Ref Handler]]
       Runtime: !Ref Runtime
