@@ -57,8 +57,7 @@ Resources:
         Value: "Make the connection between the S3 Bucket that is hosting the website and the API"
       DistributionConfig:
         DefaultCacheBehavior:
-          ForwardedValues:
-            QueryString: true
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
           TargetOriginId: webpage
           ViewerProtocolPolicy: redirect-to-https
         CacheBehaviors:
@@ -75,13 +74,7 @@ Resources:
               - HEAD
               - OPTIONS
             Compress: true
-            ForwardedValues:
-              Headers:
-                - Accept
-                - Referer
-                - Authorization
-                - Content-Type
-              QueryString: true
+            CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
             PathPattern: "/v1/*"
             TargetOriginId: !Ref APIStageName
             ViewerProtocolPolicy: https-only
