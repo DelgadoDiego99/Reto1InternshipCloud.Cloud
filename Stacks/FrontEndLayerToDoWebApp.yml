@@ -57,7 +57,7 @@ Resources:
         Value: "Make the connection between the S3 Bucket that is hosting the website and the API"
       DistributionConfig:
         DefaultCacheBehavior:
-          CachePolicyId: 2e54312d-136d-493c-8eb9-b001f22f67d2
+          CachePolicyId: "2e54312d-136d-493c-8eb9-b001f22f67d2"
           TargetOriginId: webpage
           ViewerProtocolPolicy: redirect-to-https
         CacheBehaviors:
@@ -70,7 +70,7 @@ Resources:
               - OPTIONS
               - PATCH 
             Compress: true
-            CachePolicyId: 2e54312d-136d-493c-8eb9-b001f22f67d2
+            CachePolicyId: "2e54312d-136d-493c-8eb9-b001f22f67d2"
             PathPattern: "/v1/*"
             TargetOriginId: !Ref APIStageName
             ViewerProtocolPolicy: https-only
