@@ -6,19 +6,6 @@ Parameters:
     Default: ToDoWebAppStackTemplates
 
 Resources:
-  S3BucketTemplatesToDoWebApp:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${AWS::AccountId}-todowebappcloudresources"
-      Tags:
-        - Key: "Purpose"
-          Value: "Keep the files with the Cloudformation stacks used by the main stack file"
-      VersioningConfiguration:
-        Status: Enabled
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
 
   S3BucketBackendToDoWebApp:
     Type: AWS::S3::Bucket
@@ -35,11 +22,5 @@ Resources:
               SSEAlgorithm: AES256
 
 Outputs:
-  S3TemplateDomainName:
-    Value: !Join ["", ["https://", !GetAtt S3BucketTemplatesToDoWebApp.DomainName]]
-    Export:
-      Name: !Join ["", [!Ref AWS::AccountId, "-", !Ref ExportS3BucketName, "-DomainName"]]
-  S3ToDoTemplateName:
-    Value: !Ref S3BucketTemplatesToDoWebApp
   S3ToDoBackendName:
     Value: !Ref S3BucketBackendToDoWebApp
