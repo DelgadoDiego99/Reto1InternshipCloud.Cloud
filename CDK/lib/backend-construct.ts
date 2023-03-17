@@ -4,8 +4,6 @@ import * as apigw from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from 'constructs';
 import { CfnOutput, NestedStack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { Authorization } from 'aws-cdk-lib/aws-events';
-import { Authorizer } from 'aws-cdk-lib/aws-apigateway';
 
 interface DataLayerProps {
     readonly DBTable: dynamodb.ITable
@@ -64,7 +62,7 @@ export class BackendLayer extends NestedStack {
         props.DBTable.grant(this.functionPUT, "dynamodb:UpdateItem");
         props.DBTable.grant(this.functionDELETE, "dynamodb:DeleteItem");
 
-        this.APIGateway = new apigw.RestApi(this, 'APIGateway', {
+        this.APIGateway = new apigw.RestApi(this, 'APIGatewayToDo', {
             deployOptions: {
                 stageName: 'api',
             }
