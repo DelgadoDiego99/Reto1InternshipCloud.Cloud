@@ -16,7 +16,8 @@ steps:
     npm install
     npm run build
     cdk synth
-    cdk diff
+    cdk bootstrap
+    #cdk diff
 
 - task: AWSShellScript@1
   inputs:
