@@ -14,5 +14,6 @@ steps:
 - script: |
     npm install -g aws-cdk
     cd CDK
-    echo $(PWD)
+    echo "$PWD"
     cdk synth
+  workingDirectory: '$(System.DefaultWorkingDirectory)/CDK'
