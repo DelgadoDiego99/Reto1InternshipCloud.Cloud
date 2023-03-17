@@ -22,6 +22,6 @@ export class DataLayer extends NestedStack {
 
         this.table = table;
 
-        new CfnOutput(this, 'APIDomain', { value: this.table.tableName });
+        new CfnOutput(this, 'TableName', { value: this.table.tableName });
     }
 }

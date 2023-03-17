@@ -1,5 +1,4 @@
-import {  Stack, StackProps } from 'aws-cdk-lib';
-import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { DataLayer } from './data-construct';
 import { BackendLayer } from './backend-construct';

@@ -41,7 +41,7 @@ export class FrontendLayer extends NestedStack {
                     originAccessIdentity: originAccessIdentity,
                     originShieldEnabled: true,
                     originShieldRegion: OriginRegionShieldRegion
-                 }),
+                }),
                 cachePolicy: cachePolicyToDoWebApp,
                 viewerProtocolPolicy: cfn.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             },
@@ -56,11 +56,11 @@ export class FrontendLayer extends NestedStack {
                 originShieldRegion: OriginRegionShieldRegion}),
             {
                 allowedMethods: cfn.AllowedMethods.ALLOW_ALL,
-                    cachePolicy: cachePolicyToDoWebApp,
-                    compress: true,
-                    viewerProtocolPolicy: cfn.ViewerProtocolPolicy.HTTPS_ONLY
+                cachePolicy: cachePolicyToDoWebApp,
+                compress: true,
+                viewerProtocolPolicy: cfn.ViewerProtocolPolicy.HTTPS_ONLY
             }
-        )            
+        )           
 
         new CfnOutput(this, 'CloudFrontDomain', { value: 'http://' + this.Cloudfront.domainName });
         new CfnOutput(this, 'CloudFrontDomainAPI', { 

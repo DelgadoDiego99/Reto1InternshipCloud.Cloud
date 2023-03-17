@@ -4,6 +4,8 @@ import * as apigw from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from 'constructs';
 import { CfnOutput, NestedStack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Authorization } from 'aws-cdk-lib/aws-events';
+import { Authorizer } from 'aws-cdk-lib/aws-apigateway';
 
 interface DataLayerProps {
     readonly DBTable: dynamodb.ITable
@@ -70,10 +72,18 @@ export class BackendLayer extends NestedStack {
 
         const ResourceV1 = this.APIGateway.root.addResource('v1');
         const ResourceToDo = ResourceV1.addResource('todo');
-        ResourceToDo.addMethod('GET', new apigw.LambdaIntegration(this.functionGETAll));
-        ResourceToDo.addMethod('POST', new apigw.LambdaIntegration(this.functionPOST));
-        ResourceToDo.addMethod('PUT', new apigw.LambdaIntegration(this.functionPUT));
-        ResourceToDo.addMethod('DELETE', new apigw.LambdaIntegration(this.functionDELETE));
+        ResourceToDo.addMethod('GET', new apigw.LambdaIntegration(this.functionGETAll), {
+            authorizationType: apigw.AuthorizationType.NONE
+        });
+        ResourceToDo.addMethod('POST', new apigw.LambdaIntegration(this.functionPOST), {
+            authorizationType: apigw.AuthorizationType.NONE
+        });
+        ResourceToDo.addMethod('PUT', new apigw.LambdaIntegration(this.functionPUT), {
+            authorizationType: apigw.AuthorizationType.NONE
+        });
+        ResourceToDo.addMethod('DELETE', new apigw.LambdaIntegration(this.functionDELETE), {
+            authorizationType: apigw.AuthorizationType.NONE
+        });
 
         new CfnOutput(this, 'APIDomain', { value: 'https://' + this.APIGateway.domainName + '/api/v1/todo' });
 

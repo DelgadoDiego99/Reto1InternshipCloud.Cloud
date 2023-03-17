@@ -32,7 +32,7 @@ steps:
     scriptType: 'inline'
     inlineScript: |
       cd CDK
-      cdk bootstrap
+      cdk diff
 
 - task: AWSShellScript@1
   inputs:
