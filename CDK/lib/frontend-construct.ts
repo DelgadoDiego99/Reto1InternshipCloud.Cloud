@@ -45,22 +45,20 @@ export class FrontendLayer extends NestedStack {
                 cachePolicy: cachePolicyToDoWebApp,
                 viewerProtocolPolicy: cfn.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             },
+            additionalBehaviors: {
+                "api/v1/todo": {
+                    origin: new RestApiOrigin(props.apigateway, {
+                        originShieldEnabled: true,
+                        originShieldRegion: OriginRegionShieldRegion}),
+                    allowedMethods: cfn.AllowedMethods.ALLOW_ALL,
+                    cachePolicy: cachePolicyToDoWebApp,
+                    compress: true,
+                    viewerProtocolPolicy: cfn.ViewerProtocolPolicy.HTTPS_ONLY
+                }
+            },
             defaultRootObject: 'index.html',
             priceClass: cfn.PriceClass.PRICE_CLASS_100,
-        });
-
-        this.Cloudfront.addBehavior(
-            "api/v1/todo", 
-            new RestApiOrigin(props.apigateway, {
-                originShieldEnabled: true,
-                originShieldRegion: OriginRegionShieldRegion}),
-            {
-                allowedMethods: cfn.AllowedMethods.ALLOW_ALL,
-                cachePolicy: cachePolicyToDoWebApp,
-                compress: true,
-                viewerProtocolPolicy: cfn.ViewerProtocolPolicy.HTTPS_ONLY
-            }
-        )           
+        });         
 
         new CfnOutput(this, 'CloudFrontDomain', { value: 'http://' + this.Cloudfront.domainName });
         new CfnOutput(this, 'CloudFrontDomainAPI', { 
