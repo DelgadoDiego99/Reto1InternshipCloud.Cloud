@@ -13,8 +13,6 @@ steps:
 
 - script: |
     sudo npm install -g aws-cdk
-    npm install
-    npm run build
     cdk synth
     cdk bootstrap
     #cdk diff
