@@ -30,9 +30,9 @@ export class FrontendLayer extends NestedStack {
 
         const cachePolicyToDoWebApp = new cfn.CachePolicy(this, 'ToDoWebAppCachePolicy', {
             cachePolicyName: 'ToDoWebAppCachePolicy',
-            defaultTtl: Duration.seconds(5),
+            defaultTtl: Duration.seconds(2),
             minTtl: Duration.seconds(0),
-            maxTtl: Duration.minutes(2),
+            maxTtl: Duration.seconds(5),
         })
 
         this.Cloudfront = new cfn.Distribution(this, 'CloudfrontToDo', {
