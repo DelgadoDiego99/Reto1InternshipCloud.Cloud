@@ -13,7 +13,22 @@ steps:
 
 - script: |
     npm install -g aws-cdk
+    echo
+    echo "Checking folder"
     cd CDK
+    echo
+    echo "Checking contents of folder"
+    ls -l
+    echo
+    echo "Checking current directory"
     echo "$PWD"
-    cdk synth
-  workingDirectory: '$(System.DefaultWorkingDirectory)/CDK'
+    echo
+
+- task: AWSShellScript@1
+  inputs:
+    awsCredentials: 'AWS-AzurePipelines'
+    regionName: 'us-east-1'
+    scriptType: 'inline'
+    inlineScript: 'cdk synth'
+    disableAutoCwd: true
+    workingDirectory: '/CDK'
