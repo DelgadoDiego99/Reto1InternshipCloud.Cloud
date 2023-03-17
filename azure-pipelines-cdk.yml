@@ -12,6 +12,7 @@ steps:
     versionSpec: '10.x'
 
 - script: |
+    cd CDK
     sudo npm install -g aws-cdk
     cdk synth
     cdk bootstrap
@@ -24,5 +25,5 @@ steps:
     scriptType: 'inline'
     inlineScript: 'cdk deploy --ci --require-approval never'
     disableAutoCwd: true
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/CDK'
     failOnStandardError: false
