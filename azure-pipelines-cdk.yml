@@ -29,6 +29,6 @@ steps:
     awsCredentials: 'AWS-AzurePipelines'
     regionName: 'us-east-1'
     scriptType: 'inline'
-    inlineScript: 'cdk synth'
-    disableAutoCwd: true
-    workingDirectory: '/CDK'
+    inlineScript: |
+      cd CDK
+      cdk synth
