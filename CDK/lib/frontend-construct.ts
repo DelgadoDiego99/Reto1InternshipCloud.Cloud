@@ -45,7 +45,7 @@ export class FrontendLayer extends NestedStack {
                 viewerProtocolPolicy: cfn.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             },
             additionalBehaviors: {
-                "/v1/*": {
+                "/api/*": {
                     origin: new RestApiOrigin(props.apigateway, {
                         originShieldEnabled: true,
                         originShieldRegion: OriginRegionShieldRegion}),
