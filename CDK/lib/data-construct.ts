@@ -21,7 +21,5 @@ export class DataLayer extends NestedStack {
         });
 
         this.table = table;
-
-        new CfnOutput(this, 'TableName', { value: this.table.tableName });
     }
 }

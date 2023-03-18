@@ -82,8 +82,5 @@ export class BackendLayer extends NestedStack {
         ResourceToDo.addMethod('DELETE', new apigw.LambdaIntegration(this.functionDELETE), {
             authorizationType: apigw.AuthorizationType.NONE
         });
-
-        new CfnOutput(this, 'APIDomain', { value: 'https://' + this.APIGateway.domainName + '/api/v1/todo' });
-
     }
 }

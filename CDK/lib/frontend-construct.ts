@@ -20,6 +20,7 @@ export class FrontendLayer extends NestedStack {
             accessControl: s3.BucketAccessControl.PRIVATE,
             bucketName: this.account + '-todowebappfrontend',
             encryption: s3.BucketEncryption.S3_MANAGED,
+            versioned: true
         });
 
         const originAccessIdentity = new cfn.OriginAccessIdentity(this, 'OriginAccessIdentity');
