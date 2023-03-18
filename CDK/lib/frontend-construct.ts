@@ -46,7 +46,7 @@ export class FrontendLayer extends NestedStack {
                 viewerProtocolPolicy: cfn.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
             },
             additionalBehaviors: {
-                "/api/*": {
+                "/v1/*": {
                     origin: new RestApiOrigin(props.apigateway, {
                         originShieldEnabled: true,
                         originShieldRegion: OriginRegionShieldRegion}),
@@ -58,11 +58,11 @@ export class FrontendLayer extends NestedStack {
             },
             defaultRootObject: 'index.html',
             priceClass: cfn.PriceClass.PRICE_CLASS_100,
-        });         
+        });
 
         new CfnOutput(this, 'CloudFrontDomain', { value: 'http://' + this.Cloudfront.domainName });
         new CfnOutput(this, 'CloudFrontDomainAPI', { 
-            value: 'https://' + this.Cloudfront.domainName + '/api/v1/todo'
+            value: 'https://' + this.Cloudfront.domainName + '/v1/todo'
         });
     }
 }
