@@ -16,8 +16,7 @@ export class mainStack extends Stack {
     })
 
     const frontend = new FrontendLayer(this, 'FrontendLayer', {
-      apigateway: backend.APIGateway,
-      bucketFrontend: this.account + '-todowebappfrontend'
+      apigateway: backend.APIGateway
     })
   
   }

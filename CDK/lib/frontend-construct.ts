@@ -6,8 +6,7 @@ import { CfnOutput, NestedStack, Duration } from 'aws-cdk-lib';
 import { RestApiOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 
 interface BackendLayerProps {
-    apigateway: apigw.RestApi,
-    bucketFrontend: string
+    apigateway: apigw.RestApi
 }
 
 export class FrontendLayer extends NestedStack {
@@ -19,7 +18,7 @@ export class FrontendLayer extends NestedStack {
 
         this.S3BucketWebAppFrontend = new s3.Bucket(this, 'BucketFrontend', {
             accessControl: s3.BucketAccessControl.PRIVATE,
-            bucketName: props.bucketFrontend,
+            bucketName: this.account + '-todowebappfrontend',
             encryption: s3.BucketEncryption.S3_MANAGED,
         });
 

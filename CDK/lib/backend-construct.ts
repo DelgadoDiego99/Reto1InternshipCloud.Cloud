@@ -14,7 +14,7 @@ export class BackendLayer extends NestedStack {
     private readonly functionPOST: lambda.Function;
     private readonly functionPUT: lambda.Function;
     private readonly functionDELETE: lambda.Function;
-    public readonly APIGateway: apigw.LambdaRestApi;
+    public readonly APIGateway: apigw.RestApi;
 
     constructor(scope: Construct, id: string, props: DataLayerProps) {
         super(scope, id);
